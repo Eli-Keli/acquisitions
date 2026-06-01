@@ -15,13 +15,18 @@
   },
   "scripts": {
     "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "docker:dev": "bash ./scripts/dev.sh",
+    "docker:prod": "bash ./scripts/prod.sh",
+    "docker:dev:down": "docker compose -f docker-compose.dev.yml down",
+    "docker:prod:down": "docker compose -f docker-compose.prod.yml down"
   },
   "repository": {
     "type": "git",

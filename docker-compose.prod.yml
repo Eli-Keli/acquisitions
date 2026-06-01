@@ -1,0 +1,14 @@
+# Production stack: Express app only — connects directly to Neon Cloud (no local proxy)
+services:
+  app:
+    build:
+      context: .                           # Build from project root
+      target: production                   # Use the production stage in Dockerfile
+    container_name: acquisitions-app-prod
+    env_file:
+      - .env.production                    # Prod env file (create from .env.production.example)
+    ports:
+      - '${PORT:-3000}:3000'               # Map host port to container port 3000
+    environment:
+      NODE_ENV: production                 # Force production mode
+    restart: unless-stopped                # Auto-restart on crash

@@ -1,0 +1,28 @@
+# Local development stack: Express app + Neon Local proxy
+services:
+  # Neon Local — routes Postgres traffic to an ephemeral Neon cloud branch
+  neon-local:
+    image: neondatabase/neon_local:latest  # Official Neon Local proxy image
+    container_name: neon-local             # Fixed name for easy log inspection
+    ports:
+      - '5432:5432'                        # Expose local Postgres endpoint
+    env_file:
+      - .env.development                   # Dev env vars (Neon Local connection string)
+
+  # Express API — connects to neon-local via DATABASE_URL
+  app:
+    build:
+      context: .                           # Build from project root
+      target: development                  # Use the dev stage in Dockerfile
+    container_name: acquisitions-app-dev
+    env_file:
+      - .env.development                   # Dev env vars (Neon Local connection string)
+    ports:
+      - '${PORT:-3000}:3000'               # Map host port to container port 3000
+    volumes:
+      - .:/app                             # Bind-mount source for hot reload
+      - /app/node_modules                  # Preserve container node_modules
+    depends_on:
+      neon-local:
+        condition: service_started         # Wait for Neon Local before starting
+    restart: unless-stopped                # Auto-restart on crash
